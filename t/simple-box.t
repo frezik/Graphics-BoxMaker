@@ -21,16 +21,76 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
-use Test::More tests => 1;
+use Test::More tests => 2;
 use v5.12;
+use warnings;
 use Graphics::BoxMaker;
 
+my $kerf         = 0.5;
+my $half_kerf    = $kerf / 2;
+my $thick        = 3.175; # 1/8 inches
+my $double_thick = 2 * $thick;
 my $box = Graphics::BoxMaker->new({
     width_mm     => 10,
     height_mm    => 10,
     depth_mm     => 10,
-    thickness_mm => 3.175, # 1/8 inches
-    kerf         => 0.5,
+    thickness_mm => $thick,
+    kerf_mm      => $kerf,
     joins        => 'simple',
 });
 isa_ok( $box => 'Graphics::BoxMaker' );
+
+
+my $box_description = $box->make_box;
+is_deeply( $box_description, {
+    width_mm     => 10,
+    height_mm    => 10,
+    depth_mm     => 10,
+    thickness_mm => $thick,
+    kerf_mm      => $kerf,
+    box          => [
+        { # A
+            kerf => [
+                [ 0, 0 ],
+                [ (10 + $kerf - $double_thick), 0 ],
+                [ (10 + $kerf - $double_thick), (10 + $kerf) ],
+                [ 0, (10 + $kerf) ],
+            ],
+            raw => [
+                [ $half_kerf, $half_kerf ],
+                [ (10 + $half_kerf - $double_thick), $half_kerf ],
+                [ (10 + $half_kerf - $double_thick), 10 + $half_kerf ],
+                [ $half_kerf, 10 + $half_kerf ],
+            ],
+        },
+        { # B
+            kerf => [
+                [ 0, 0 ],
+                [ 10 + $kerf, 0 ],
+                [ 10 + $kerf, 10 + $kerf ],
+                [ 0, 10 + $kerf ],
+            ],
+            raw => [
+                [ $half_kerf, $half_kerf ],
+                [ 10 + $half_kerf, $half_kerf ],
+                [ 10 + $half_kerf, 10 + $half_kerf ],
+                [ $half_kerf, 10 + $half_kerf ],
+            ],
+        },
+        { # C
+            kerf => [
+                [ 0, 0 ],
+                [ (10 + $kerf - $double_thick), 0 ],
+                [ (10 + $kerf - $double_thick), (10 + $kerf - $double_thick) ],
+                [ 0, (10 + $kerf - $double_thick) ],
+            ],
+            raw => [
+                [ $half_kerf, $half_kerf ],
+                [ (10 + $half_kerf - $double_thick), $half_kerf ],
+                [ (10 + $half_kerf - $double_thick),
+                    (10 + $half_kerf - $double_thick) ],
+                [ $half_kerf, (10 + $half_kerf - $double_thick) ],
+            ],
+        },
+    ]
+});
