@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg height="100%" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<g id="cut" style="stroke: black; stroke-width: 1; fill: none">
+		<polyline points="0,0 50.13779405,0 50.13779405,72.6377935 0,72.6377935 " />
+		<polyline points="0,1.7716535 72.6377935,1.7716535 72.6377935,74.409447 0,74.409447 " />
+		<polyline points="0,3.543307 50.13779405,3.543307 50.13779405,53.68110105 0,53.68110105 " />
+	</g>
+	<!-- 
+	Generated using the Perl SVG Module V2.59
+	by Ronan Oger
+	Info: http://www.roitsystems.com/
+ -->
+</svg>

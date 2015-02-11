@@ -23,6 +23,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 use Test::More tests => 2;
 use v5.12;
+use warnings;
+use Graphics::BoxMaker;
+use Graphics::BoxMaker::SVG;
 
-use_ok( 'Graphics::BoxMaker' );
-use_ok( 'Graphics::BoxMaker::SVG' );
+my $kerf         = 0.5;
+my $half_kerf    = $kerf / 2;
+my $thick        = 3.175; # 1/8 inches
+my $double_thick = 2 * $thick;
+my $box = Graphics::BoxMaker->new({
+    width_mm     => 10,
+    height_mm    => 10,
+    depth_mm     => 10,
+    thickness_mm => $thick,
+    kerf_mm      => $kerf,
+    joins        => 'simple',
+});
+
+my $svg_plotter = Graphics::BoxMaker::SVG->new;
+isa_ok( $svg_plotter => 'Graphics::BoxMaker::SVG' );
+my $svg = $svg_plotter->plot( $box->make_box );
+isa_ok( $svg => 'SVG' );
