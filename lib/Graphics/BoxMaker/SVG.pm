@@ -36,10 +36,25 @@ sub plot
 sub _draw_box
 {
     my ($self, $svg, $box, $anchor_y, $kref_mm) = @_;
-    my @kerf      = @{ $box->{kerf} };
-    my $anchor_x  = 0;
-    my $xv = [ map { ($anchor_x + $_->[0]) * MM_IN_PX } @kerf, $kerf[0] ];
-    my $yv = [ map { ($anchor_y + $_->[1]) * MM_IN_PX } @kerf, $kerf[0] ];
+    my @kerf = @{ $box->{kerf} };
+
+    my $far_x = $kerf[1][0] + $kref_mm;
+    my (@xv, @yv, @xv2, @yv2);
+    foreach (@kerf, $kerf[0]) {
+        push @xv,  $_->[0] * MM_IN_PX;
+        push @yv,  ($anchor_y + $_->[1]) * MM_IN_PX;
+        push @xv2, ($far_x + $_->[0])    * MM_IN_PX;
+        push @yv2, ($anchor_y + $_->[1]) * MM_IN_PX;
+    }
+    $self->_draw_polyline( $svg, \@xv, \@yv );
+    $self->_draw_polyline( $svg, \@xv2, \@yv2 );
+
+    return $anchor_y + $kerf[2][1] + $kref_mm;
+}
+
+sub _draw_polyline
+{
+    my ($self, $svg, $xv, $yv) = @_;
 
     my $points = $svg->get_path(
         x       => $xv,
@@ -51,7 +66,7 @@ sub _draw_box
         %$points,
     );
 
-    return $anchor_y + $kerf[2][1] + $kref_mm;
+    return 1;
 }
 
 
