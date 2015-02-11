@@ -38,8 +38,8 @@ sub _draw_box
     my ($self, $svg, $box, $anchor_y, $kref_mm) = @_;
     my @kerf      = @{ $box->{kerf} };
     my $anchor_x  = 0;
-    my $xv = [ map { ($anchor_x + $_->[0]) * MM_IN_PX } @kerf ];
-    my $yv = [ map { ($anchor_y + $_->[1]) * MM_IN_PX } @kerf ];
+    my $xv = [ map { ($anchor_x + $_->[0]) * MM_IN_PX } @kerf, $kerf[0] ];
+    my $yv = [ map { ($anchor_y + $_->[1]) * MM_IN_PX } @kerf, $kerf[0] ];
 
     my $points = $svg->get_path(
         x       => $xv,
@@ -51,7 +51,7 @@ sub _draw_box
         %$points,
     );
 
-    return $anchor_y + $kerf[1][1] + $kref_mm;
+    return $anchor_y + $kerf[2][1] + $kref_mm;
 }
 
 
