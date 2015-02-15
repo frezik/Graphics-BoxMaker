@@ -23,13 +23,14 @@
 # POSSIBILITY OF SUCH DAMAGE.
 package Graphics::BoxMaker;
 
+# ABSTRACT: Create boxes for CNC machines, such as laser cutters
 use v5.12;
 use warnings;
 use Moose;
 use Moose::Util::TypeConstraints;
 use namespace::autoclean;
 
-# ABSTRACT: Create boxes for CNC machines, such as laser cutters
+use constant JOIN_THICK_MULTIPLIER => 3;
 
 
 has $_ => (
@@ -70,6 +71,7 @@ sub make_box
     );
     return \%desc;
 }
+
 
 sub _make_side_a_simple
 {
@@ -115,8 +117,6 @@ sub _make_side_a_simple
     return \%side;
 }
 
-
-
 sub _make_side_b_simple
 {
     my ($self) = @_;
@@ -158,8 +158,6 @@ sub _make_side_b_simple
 
     return \%side;
 }
-
-
 
 sub _make_side_c_simple
 {
@@ -203,6 +201,38 @@ sub _make_side_c_simple
     ];
 
     return \%side;
+}
+
+
+sub _calc_side_a_edge_b
+{
+    my ($self, $length, $kerf, $thick) = @_;
+    my $join_length        = $thick * $self->JOIN_THICK_MULTIPLIER;
+    my $close_enough_dist  = $join_length + $thick;
+    my $uppy_length        = $join_length + ($kerf / 2);
+    my $half_uppy_length   = $uppy_length / 2;
+    my $double_uppy_length = $uppy_length * 2;
+
+    my (@start_joins, @end_joins);
+    my $start_anchor    = $half_uppy_length;
+    my $end_anchor      = $length - $half_uppy_length;
+    my $is_close_enough = 0;
+
+    while(! $is_close_enough ) {
+        my $dist = $end_anchor - $start_anchor;
+        push @start_joins, $start_anchor;
+        unshift @end_joins, $end_anchor;
+
+        if( $dist <= $close_enough_dist ) {
+            $is_close_enough = 1;
+        }
+        else {
+            $start_anchor += $double_uppy_length;
+            $end_anchor   -= $double_uppy_length;
+        }
+    }
+
+    return (@start_joins, @end_joins);
 }
 
 
